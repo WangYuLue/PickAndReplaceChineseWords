@@ -4,6 +4,16 @@ interface Block {
   parentBlock: Block;
 }
 
+const Val = [{
+  name: '任意类型',
+}, {
+  name: '布尔值',
+}, {
+  name: '字符串',
+}, {
+  name: '数字',
+}]
+
 /**
  * 检查 目标节点的父节点是否高亮
  *

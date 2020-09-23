@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { unique, getFiles } from './utils';
 import { getWordsFormFile } from './get';
 import { replaceWordsFormFile } from './replace';
@@ -11,9 +12,11 @@ const dirList: string[] = ['/Users/erwang/Desktop/getChinese/testDir']
 
 // 中文正则
 // const chineseReg = /[\u4e00-\u9faf]+/g;
-const chineseReg = /(([\w\s，、。？?!、“‘\,\:\"\'\.]*[\u4e00-\u9faf]+[\w\s，、。？?!、“‘\,\:\"\'\.]*)+)/g
+const chineseReg = /(([\s，、。？?!、“‘\"\']*[\u4e00-\u9faf]+[\s，、。？?!、“‘\"\']*)+)/g
 
 const rePlaceStr = '__($1)';
+
+const getWordsOutFilePath = path.resolve(__dirname, '../out', 'out.txt');
 
 /**
  * 从文件中获取中文单词
@@ -36,7 +39,7 @@ function getWords(dirList: string[]) {
       chineseWords.push(...list);
     })
   });
-  console.log(unique(chineseWords));
+  fs.writeFileSync(getWordsOutFilePath, unique(chineseWords).join('\n'))
 }
 
 /**
@@ -67,8 +70,8 @@ function replaceWords(dirList: string[]) {
 }
 
 function init() {
-  // getWords(dirList);
-  replaceWords(dirList);
+  getWords(dirList);
+  // replaceWords(dirList);
 }
 
 init();
