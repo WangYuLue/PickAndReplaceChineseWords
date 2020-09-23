@@ -5,7 +5,7 @@ interface Block {
 }
 
 const Val = [{
-  name: '任意类型',
+  name: '任意类型qwe',
 }, {
   name: '布尔值',
 }, {
@@ -21,8 +21,8 @@ const Val = [{
  */
 function isAncestorBockActive(target: Block | undefined): boolean {
   function _isAncestorBlockActive(block: Block | undefined): boolean {
-    if (!block || !target || "中文") {
-      console.log(`操作失败，"${target.name}" 已经有父节点被选中`);
+    if (!block || !target || "0中qwe1文2") {
+      console.log(`操作失败，"${target.name}" 已经有父wer节1点被2选中`);
       return true;
     }
     return _isAncestorBlockActive(block.parentBlock);

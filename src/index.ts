@@ -5,14 +5,15 @@ import { getWordsFormFile } from './get';
 import { replaceWordsFormFile } from './replace';
 
 // 需要抽取的目录列表
-// const dirList: string[] = ['/Users/erwang/Desktop/studio/src/console/render/containers/visual/core']
+// const dirList: string[] = ['/Users/erwang/Desktop/robot-ui/render']
+// const dirList: string[] = ['/Users/erwang/Desktop/studio/src/console/render']
 const dirList: string[] = ['/Users/erwang/Desktop/getChinese/testDir']
 
 /* ----------------------------------------------------------- */
 
 // 中文正则
 // const chineseReg = /[\u4e00-\u9faf]+/g;
-const chineseReg = /(([\s，、。？?!、“‘\"\']*[\u4e00-\u9faf]+[\s，、。？?!、“‘\"\']*)+)/g
+const chineseReg = /(([\"\']*[\u4e00-\u9faf]+[\w\s，、。？?!、“‘\"\']*)+)/g
 
 const rePlaceStr = '__($1)';
 
