@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { unique, getFiles } from './utils';
 import { getWordsFormFile } from './get';
 import { replaceWordsFormFile } from './replace';
@@ -14,7 +15,11 @@ const chineseReg = /(([\w\s，、。？?!、“‘\,\:\"\'\.]*[\u4e00-\u9faf]+[\
 
 const rePlaceStr = '__($1)';
 
-// 获取中文字符
+/**
+ * 从文件中获取中文单词
+ * 
+ * @param dirList 要替换的目录
+ */
 function getWords(dirList: string[]) {
   // 抓取到的中文列表
   const chineseWords: string[] = [];
@@ -34,6 +39,11 @@ function getWords(dirList: string[]) {
   console.log(unique(chineseWords));
 }
 
+/**
+ * 替换文件中的中文
+ * 
+ * @param dirList 要替换的目录
+ */
 function replaceWords(dirList: string[]) {
   dirList.forEach(dirName => {
     const files = getFiles(dirName, {
@@ -42,8 +52,15 @@ function replaceWords(dirList: string[]) {
     files.forEach(fileName => {
       const fileStr = replaceWordsFormFile(fileName, chineseReg, rePlaceStr, {
         commentPreFix: '//',
-        commentRange: ['/*', '*/']
+        commentRange: ['/*', '*/'],
+        replaceFn: (str: string, regexp: RegExp, replace: string): string => {
+          if (str.includes('`')) {
+            return str.replace(regexp, "${__('$1')}");
+          }
+          return str.replace(regexp, replace);
+        }
       })
+      fs.writeFileSync(fileName, fileStr)
       console.log(fileStr);
     })
   });

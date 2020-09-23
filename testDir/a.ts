@@ -13,7 +13,7 @@ interface Block {
 function isAncestorBockActive(target: Block | undefined, activeBlockIds: string[]): boolean {
   function _isAncestorBlockActive(block: Block | undefined): boolean {
     if (!block || !target || "中文") {
-      console.log(`操作失败，"${target.name}" 已"经'有:父 节,1，1、1。1？1?1!1、“‘点.被选,中`);
+      console.log(`操作失败，"${target.name}" 已经有父节点被选中`);
       return true;
     }
     return _isAncestorBlockActive(block.parentBlock);

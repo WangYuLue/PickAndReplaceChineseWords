@@ -4,6 +4,7 @@ import { unique } from './utils';
 interface replaceWordsFormFileOptions {
   commentPreFix?: string; // 表示注释的前缀； 例如在 js 中，为 //，添加后会过滤注释中的匹配
   commentRange?: [string, string]; // 表示范围注释； 例如在 js 中，为 /* 和 */，添加后会过滤注释中的匹配
+  replaceFn?(str: string, regexp: RegExp, replace: string): string; // 自定义替换逻辑
 }
 
 /**
@@ -16,14 +17,14 @@ interface replaceWordsFormFileOptions {
  */
 export const replaceWordsFormFile = (fileName: string, regexp: RegExp, replace: string, options: replaceWordsFormFileOptions = {}): string => {
   const strList: string[] = [];
-  const { commentPreFix, commentRange } = options;
+  const { commentPreFix, commentRange, replaceFn } = options;
   let isInComment = false;
   fs.readFileSync(fileName)
     .toString()
     .split('\n')
     .forEach(function (line) {
       let isRangeComment = false;
-      let commentLine = '';
+      let commentStr = '';
       if (commentRange) {
         let blockCommontStartIndex = line.indexOf(commentRange[0]);
         let blockCommontEndIndex = line.indexOf(commentRange[1]);
@@ -50,10 +51,14 @@ export const replaceWordsFormFile = (fileName: string, regexp: RegExp, replace: 
         let commentIndex = line.indexOf(commentPreFix);
         if (commentIndex >= 0) {
           line = line.slice(0, commentIndex);
-          commentLine = line.slice(commentIndex)
+          commentStr = line.slice(commentIndex)
         }
       }
-      strList.push(replaceWordsFormString(line, regexp, replace) + commentLine);
+      const replaceStr = replaceFn ?
+        replaceFn(line, regexp, replace) :
+        replaceWordsFormString(line, regexp, replace)
+
+      strList.push(replaceStr + commentStr);
     });
   return strList.join('\n')
 }
@@ -65,9 +70,5 @@ export const replaceWordsFormFile = (fileName: string, regexp: RegExp, replace: 
  * @param regexp 正则表达式 （！！！注意，这里的正则表达式需要加 global 标志， 例如：/[\u4e00-\u9faf]+/g ）
  */
 export const replaceWordsFormString = (str: string, regexp: RegExp, replace: string): string => {
-  // 基于特定业务的逻辑定制
-  if (str.includes('`')) {
-    return str.replace(regexp, "${__('$1')}");
-  }
   return str.replace(regexp, replace);
 }
