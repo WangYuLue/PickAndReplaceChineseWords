@@ -65,5 +65,9 @@ export const replaceWordsFormFile = (fileName: string, regexp: RegExp, replace: 
  * @param regexp 正则表达式 （！！！注意，这里的正则表达式需要加 global 标志， 例如：/[\u4e00-\u9faf]+/g ）
  */
 export const replaceWordsFormString = (str: string, regexp: RegExp, replace: string): string => {
+  // 基于特定业务的逻辑定制
+  if (str.includes('`')) {
+    return str.replace(regexp, "${__('$1')}");
+  }
   return str.replace(regexp, replace);
 }
