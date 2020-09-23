@@ -11,7 +11,7 @@ interface getFilesOptions {
  * @param list 字符串列表
  */
 export const unique = (list: string[]): string[] => {
-  return Array.from(new Set(list));
+  return Array.from(new Set(list.map(str => str.trim())));
 }
 
 /**
@@ -44,3 +44,4 @@ export const getFiles = (fileDir: string, options: getFilesOptions = {}): string
   });
   return fileList;
 };
+

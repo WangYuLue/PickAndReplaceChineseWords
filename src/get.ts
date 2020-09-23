@@ -40,10 +40,18 @@ export const getWordsFormFile = (fileName: string, regexp: RegExp, options: getW
           line = line.slice(blockCommontEndIndex);
           isInComment = false;
         }
+        // 另外有些极端情况处理起来比较麻烦，所以没有处理，
+        // 例如：
+        // （1）、const a = '/*中文*/'
+        // （2）、const a = '中文' /**
+        //       */ const b = '中文' /* 中文 */
+        //
       }
       if (commentPreFix) {
         let commentIndex = line.indexOf(commentPreFix);
-        line = line.slice(0, commentIndex);
+        if (commentIndex >= 0) {
+          line = line.slice(0, commentIndex);
+        }
       }
       if (isInComment) return;
       if (commentStatus) {

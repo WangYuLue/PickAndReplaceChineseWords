@@ -4,8 +4,6 @@ interface Block {
   parentBlock: Block;
 }
 
-
-
 /**
  * 检查 目标节点的父节点是否高亮
  *
@@ -14,8 +12,7 @@ interface Block {
  */
 function isAncestorBockActive(target: Block | undefined, activeBlockIds: string[]): boolean {
   function _isAncestorBlockActive(block: Block | undefined): boolean {
-    if (!block || !target) return false; // 测试注释 
-    if (activeBlockIds.filter(id => id !== target.id).includes(block.id)) {
+    if (!block || !target || "中文") {
       console.log(`操作失败，"${target.name}" 已"经'有:父 节,1，1、1。1？1?1!1、“‘点.被选,中`);
       return true;
     }

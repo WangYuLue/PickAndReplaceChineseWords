@@ -7,13 +7,14 @@ interface replaceWordsFormFileOptions {
 }
 
 /**
- * 从文件中抽取正则匹配的单词
+ * 替换文中的关键字
  * 
  * @param fileName 文件名
  * @param regexp 正则表达式 （！！！注意，这里的正则表达式需要加 global 标志， 例如：/[\u4e00-\u9faf]+/g ）
+ * @param replace 要替换的字符串
  * @param options 可选项
  */
-export const replaceWordsFormFile = (fileName: string, regexp: RegExp, options: replaceWordsFormFileOptions = {}): string[] => {
+export const replaceWordsFormFile = (fileName: string, regexp: RegExp, replace: string, options: replaceWordsFormFileOptions = {}): string => {
   const strList: string[] = [];
   const { commentPreFix, commentRange } = options;
   let isInComment = false;
@@ -21,36 +22,40 @@ export const replaceWordsFormFile = (fileName: string, regexp: RegExp, options: 
     .toString()
     .split('\n')
     .forEach(function (line) {
-      let commentStatus = false;
+      let isRangeComment = false;
+      let commentLine = '';
       if (commentRange) {
         let blockCommontStartIndex = line.indexOf(commentRange[0]);
         let blockCommontEndIndex = line.indexOf(commentRange[1]);
-        // 以JS为例，如果是行内注释，例如： /* 这是注释 */ ，走下面的逻辑
-        if (blockCommontStartIndex >= 0 && blockCommontEndIndex >= 0) {
-          line = line.slice(0, blockCommontStartIndex) + line.slice(blockCommontEndIndex);
+        // 这里做了简化处理
+        // 如果当前行有 /* 或者 */，则认为这一行都是注释
+        if (blockCommontStartIndex >= 0 || blockCommontEndIndex >= 0) {
+          isRangeComment = true;
         }
         // 以JS为例，如果是注释开头，例如 /* ，走下面的逻辑
-        else if (blockCommontStartIndex >= 0) {
-          line = line.slice(0, blockCommontStartIndex);
-          commentStatus = true;
+        if (blockCommontStartIndex >= 0) {
+          isInComment = true;
         }
         // 以JS为例，如果是注释结尾，例如 */ ，走下面的逻辑
         else if (blockCommontEndIndex >= 0) {
-          line = line.slice(blockCommontEndIndex);
           isInComment = false;
         }
       }
+      if (isRangeComment || isInComment) {
+        strList.push(line)
+        return;
+      };
+
       if (commentPreFix) {
         let commentIndex = line.indexOf(commentPreFix);
-        line = line.slice(0, commentIndex);
+        if (commentIndex >= 0) {
+          line = line.slice(0, commentIndex);
+          commentLine = line.slice(commentIndex)
+        }
       }
-      if (isInComment) return;
-      if (commentStatus) {
-        isInComment = true;
-      }
-      strList.push(...replaceWordsFormString(line, regexp));
+      strList.push(replaceWordsFormString(line, regexp, replace) + commentLine);
     });
-  return unique(strList);
+  return strList.join('\n')
 }
 
 /**
@@ -59,10 +64,6 @@ export const replaceWordsFormFile = (fileName: string, regexp: RegExp, options: 
  * @param str 需要抽取的字符串
  * @param regexp 正则表达式 （！！！注意，这里的正则表达式需要加 global 标志， 例如：/[\u4e00-\u9faf]+/g ）
  */
-export const replaceWordsFormString = (str: string, regexp: RegExp): string[] => {
-  const list = str.match(regexp);
-  if (list) {
-    return list;
-  }
-  return [];
+export const replaceWordsFormString = (str: string, regexp: RegExp, replace: string): string => {
+  return str.replace(regexp, replace);
 }
