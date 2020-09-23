@@ -30,7 +30,10 @@ function getWords(dirList: string[]) {
     const files = getFiles(dirName, {
       extList: ['.ts', '.tsx']
     })
-    files.forEach(fileName => {
+    files.filter(fileName => {
+      return !fileName.includes('__tests__') &&
+        !fileName.includes('__deprecated__')
+    }).forEach(fileName => {
       const list = getWordsFormFile(fileName, chineseReg, {
         commentPreFix: '//',
         commentRange: ['/*', '*/']
